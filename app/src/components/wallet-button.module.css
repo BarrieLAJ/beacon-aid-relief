@@ -1,0 +1,15 @@
+.walletButton {
+	background-color: rgb(var(--beacon-600)) !important;
+	color: white !important;
+	height: 40px !important;
+	padding: 0 24px !important;
+	border-radius: 6px !important;
+	font-size: 14px !important;
+	font-weight: 500 !important;
+	transition: background-color 0.2s !important;
+}
+
+.walletButton:hover,
+.walletButton:not([disabled]):hover {
+	background-color: rgb(var(--beacon-700)) !important;
+}

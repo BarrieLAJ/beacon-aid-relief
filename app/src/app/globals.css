@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+ 
+@layer base {
+  :root {
+    --background: 180 20% 99%;
+    --foreground: 180 10% 10%;
+    
+    --card: 180 20% 99%;
+    --card-foreground: 180 10% 10%;
+ 
+    --popover: 180 20% 99%;
+    --popover-foreground: 180 10% 10%;
+ 
+    --primary: 174 60% 41%;
+    --primary-foreground: 180 20% 99%;
+ 
+    --secondary: 180 10% 90%;
+    --secondary-foreground: 180 10% 10%;
+ 
+    --muted: 180 10% 90%;
+    --muted-foreground: 180 10% 40%;
+ 
+    --accent: 180 10% 90%;
+    --accent-foreground: 180 10% 10%;
+ 
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 180 20% 99%;
+
+    --border: 180 20% 90%;
+    --input: 180 20% 90%;
+    --ring: 174 60% 41%;
+ 
+    --radius: 0.75rem;
+  }
+}
+ 
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+}
+
+.glass-card {
+  @apply bg-white/30 backdrop-blur-md border border-white/20 shadow-lg;
+}
+
+.hover-lift {
+  @apply transition-transform duration-300 hover:-translate-y-1;
+}
+
+.fade-in {
+  @apply animate-in duration-500;
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.slide-in {
+  @apply animate-in slide-in-from-bottom duration-500;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
