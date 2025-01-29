@@ -1,5 +1,6 @@
 {
     "scripts": {
+        "dev": "cd app && yarn dev",
         "lint:fix": "prettier */*.js \"*/**/*{.js,.ts}\" -w",
         "lint": "prettier */*.js \"*/**/*{.js,.ts}\" --check"
     },

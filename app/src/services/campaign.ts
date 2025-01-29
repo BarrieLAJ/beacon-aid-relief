@@ -13,6 +13,13 @@ const PROGRAM_ID = new PublicKey(
 type CampaignInsert = Database["public"]["Tables"]["campaigns"]["Insert"];
 type DonationInsert = Database["public"]["Tables"]["donations"]["Insert"];
 
+type DbCampaign = Database["public"]["Tables"]["campaigns"]["Row"];
+type DbDonation = Database["public"]["Tables"]["donations"]["Row"];
+
+interface CampaignWithDonations extends DbCampaign {
+	donations: DbDonation[];
+}
+
 export class CampaignService {
 	constructor(
 		private program: Program<BeaconAidRelief>,
@@ -65,7 +72,6 @@ export class CampaignService {
 		const { data: userData } = await supabase.auth.getUser();
 		if (!userData.user) throw new Error("User not authenticated");
 
-		// Store both Supabase user ID and wallet address for double verification
 		const campaignData: CampaignInsert = {
 			title,
 			description,
@@ -75,7 +81,7 @@ export class CampaignService {
 			end_date: new Date(endDate).toISOString(),
 			image_url: imageUrl || null,
 			user_id: userData.user.id,
-			creator_wallet: this.wallet.publicKey.toString(), // Add creator's wallet address
+			creator_wallet: this.wallet.publicKey.toString(),
 			solana_address: campaign.publicKey.toString(),
 			status: "active",
 			raised: 0,
@@ -108,7 +114,7 @@ export class CampaignService {
 		const currentRaised = campaign.raised || 0;
 
 		// Execute Solana donation
-		await this.program.methods
+		const tx = await this.program.methods
 			.donate(new BN(amount))
 			.accounts({
 				campaign: campaignPubkey,
@@ -123,6 +129,7 @@ export class CampaignService {
 			campaign_id: campaignId,
 			donor_id: this.wallet.publicKey.toString(),
 			message: message || null,
+			transaction_signature: tx,
 		};
 
 		const { error } = await supabase.from("donations").insert(donationData);
@@ -141,8 +148,10 @@ export class CampaignService {
 			campaignId,
 			amount,
 			donorAddress: this.wallet.publicKey.toString(),
+			transactionSignature: tx,
 		};
 	}
+
 	async getAllDonations() {
 		const { data: donations, error } = await supabase
 			.from("donations")
@@ -171,10 +180,12 @@ export class CampaignService {
 				`
 				*,
 				donations (
+					id,
 					amount,
 					donor_id,
 					message,
-					created_at
+					created_at,
+					transaction_signature
 				)
 			`
 			)
@@ -196,25 +207,28 @@ export class CampaignService {
 		};
 	}
 
-	async getAllCampaigns() {
-		const { data: campaigns, error } = await supabase
+	async getAllCampaigns(): Promise<CampaignWithDonations[]> {
+		const { data, error } = await supabase
 			.from("campaigns")
 			.select(
 				`
 				*,
 				donations (
+					id,
 					amount,
 					donor_id,
 					message,
-					created_at
+					created_at,
+					campaign_id
 				)
 			`
 			)
+			.eq("status", "active")
 			.order("created_at", { ascending: false });
 
 		if (error) throw error;
 
-		return campaigns;
+		return data || [];
 	}
 
 	async withdraw(campaignId: string) {
@@ -232,7 +246,7 @@ export class CampaignService {
 		const campaignPubkey = new PublicKey(campaign.solana_address);
 
 		// Execute Solana withdrawal
-		await this.program.methods
+		const tx = await this.program.methods
 			.withdraw()
 			.accounts({
 				campaign: campaignPubkey,
@@ -254,6 +268,7 @@ export class CampaignService {
 		return {
 			campaignId,
 			status: "completed",
+			transactionSignature: tx,
 		};
 	}
 }
@@ -263,16 +278,17 @@ export const useCampaignService = () => {
 	const { isConnected, address } = useAppKitAccount();
 	const { connection } = useAppKitConnection();
 
-	const getService = async () => {
-		if (!isConnected || !address) {
-			throw new Error("Wallet not connected");
+	const getService = async (shouldCheckWallet = true) => {
+		let wallet;
+		if (shouldCheckWallet && (!isConnected || !address)) {
+			wallet = Keypair.generate();
+			console.warn("Wallet not connected");
+		} else if (shouldCheckWallet && isConnected && address) {
+			wallet = {
+				publicKey: new PublicKey(address),
+			};
 		}
-
-		const wallet = {
-			publicKey: new PublicKey(address),
-		};
-
-		return await CampaignService.init(connection!, wallet);
+		return await CampaignService.init(connection!, wallet!);
 	};
 
 	return {

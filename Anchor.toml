@@ -8,7 +8,7 @@ beacon_aid_relief = "BhENLVpEECmmibKWHiHKCxch3Q6FHTJ42faPASkLWSMS"
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "Localnet"
+cluster = "localnet"
 wallet = "/Users/alhajibarrie/.config/solana/id.json"
 
 [scripts]

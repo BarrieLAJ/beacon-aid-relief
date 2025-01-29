@@ -67,6 +67,7 @@ export type Database = {
 					donor_id: string | null;
 					id: string;
 					message: string | null;
+					transaction_signature: string | null;
 				};
 				Insert: {
 					amount: number;
@@ -75,6 +76,7 @@ export type Database = {
 					donor_id?: string | null;
 					id?: string;
 					message?: string | null;
+					transaction_signature?: string | null;
 				};
 				Update: {
 					amount?: number;
@@ -83,6 +85,7 @@ export type Database = {
 					donor_id?: string | null;
 					id?: string;
 					message?: string | null;
+					transaction_signature?: string | null;
 				};
 				Relationships: [
 					{

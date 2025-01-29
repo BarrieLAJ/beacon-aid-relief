@@ -4,40 +4,36 @@ import { useCampaignService } from "@/services/campaign";
 import type { Database } from "@/integrations/supabase/types";
 
 type DbCampaign = Database["public"]["Tables"]["campaigns"]["Row"];
+type DbDonation = Database["public"]["Tables"]["donations"]["Row"];
 
-interface Donation {
-	amount: number;
-	donor_id: string;
-	message: string | null;
-	created_at: string;
-}
-
-interface Campaign extends Omit<DbCampaign, "donations"> {
-	donations: Donation[];
+interface Campaign extends DbCampaign {
+	donations: Array<DbDonation & { donor_id: string }>;
 }
 
 export function CampaignGrid() {
 	const [campaigns, setCampaigns] = useState<Campaign[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
+	const [error, setError] = useState<string | null>(null);
 	const campaignService = useCampaignService();
 
 	const loadCampaigns = async () => {
 		try {
 			setIsLoading(true);
+			setError(null);
+
 			const data = await campaignService.getAllCampaigns();
-			// Transform the data to match our Campaign type
-			const transformedData: Campaign[] = (data || []).map((campaign) => ({
+			const transformedData: Campaign[] = data.map((campaign) => ({
 				...campaign,
-				donations: (campaign.donations || []).map((donation) => ({
-					amount: donation.amount,
+				donations: campaign.donations.map((donation) => ({
+					...donation,
 					donor_id: donation.donor_id || "anonymous",
-					message: donation.message,
-					created_at: donation.created_at,
 				})),
 			}));
+
 			setCampaigns(transformedData);
-		} catch (error) {
-			console.error("Failed to load campaigns:", error);
+		} catch (err) {
+			console.error("Error loading campaigns:", err);
+			setError("Failed to load campaigns. Please try again later.");
 		} finally {
 			setIsLoading(false);
 		}
@@ -46,6 +42,21 @@ export function CampaignGrid() {
 	useEffect(() => {
 		loadCampaigns();
 	}, []);
+
+	if (error) {
+		return (
+			<div className="text-center">
+				<h3 className="text-xl font-semibold text-red-600">Error</h3>
+				<p className="text-gray-500">{error}</p>
+				<button
+					onClick={loadCampaigns}
+					className="mt-4 text-sm text-blue-600 hover:underline"
+				>
+					Try Again
+				</button>
+			</div>
+		);
+	}
 
 	if (isLoading) {
 		return (
@@ -74,7 +85,7 @@ export function CampaignGrid() {
 					id={campaign.id}
 					title={campaign.title}
 					description={campaign.description}
-					goal={campaign.goal || 0}
+					goal={campaign.goal}
 					raised={campaign.raised || 0}
 					imageUrl={campaign.image_url}
 					donations={campaign.donations}

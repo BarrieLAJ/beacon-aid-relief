@@ -13,6 +13,7 @@ import {
 	CardTitle,
 } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
+import { CampaignGrid } from "../campaign/CampaignGrid";
 
 type Campaign = {
 	id: number;
@@ -123,7 +124,8 @@ const Campaigns = () => {
 			</div>
 
 			{/* Campaigns Grid */}
-			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+			<CampaignGrid />
+			{/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 				{filteredCampaigns.map((campaign) => (
 					<Card
 						key={campaign.id}
@@ -191,7 +193,7 @@ const Campaigns = () => {
 						</CardFooter>
 					</Card>
 				))}
-			</div>
+			</div> */}
 		</div>
 	);
 };
