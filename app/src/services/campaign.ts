@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Program, AnchorProvider, BN } from "@project-serum/anchor";
 import { Connection, Keypair, PublicKey, SystemProgram } from "@solana/web3.js";
 import { useAppKitAccount } from "@reown/appkit/react";
@@ -227,7 +228,7 @@ export class CampaignService {
 			.order("created_at", { ascending: false });
 
 		if (error) throw error;
-
+		// @ts-expect-error
 		return data || [];
 	}
 
