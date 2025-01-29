@@ -1,8 +1,15 @@
 
 .anchor
 .DS_Store
-target
+# target
 **/*.rs.bk
 node_modules
 test-ledger
 .yarn
+target/deploy
+target/release
+target/sbf-solana-solana
+target/.rustc_info.json
+
+!target/idl/beacon_aid_relief.json
+!target/types/beacon_aid_relief.ts
