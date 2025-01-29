@@ -4,93 +4,85 @@ import { useState } from "react";
 import { Search, Filter } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardFooter,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 import { CampaignGrid } from "../campaign/CampaignGrid";
 
-type Campaign = {
-	id: number;
-	title: string;
-	description: string;
-	raised: number;
-	goal: number;
-	image: string;
-	category: string;
-	location: string;
-	daysLeft: number;
-};
+// type Campaign = {
+// 	id: number;
+// 	title: string;
+// 	description: string;
+// 	raised: number;
+// 	goal: number;
+// 	image: string;
+// 	category: string;
+// 	location: string;
+// 	daysLeft: number;
+// };
 
-const campaigns: Campaign[] = [
-	{
-		id: 1,
-		title: "Hurricane Relief Fund",
-		description: "Emergency support for communities affected by Hurricane Ian",
-		raised: 85000,
-		goal: 100000,
-		image: "https://images.unsplash.com/photo-1605810230434-7631ac76ec81",
-		category: "Natural Disaster",
-		location: "Florida, USA",
-		daysLeft: 15,
-	},
-	{
-		id: 2,
-		title: "Earthquake Response",
-		description: "Immediate assistance for earthquake victims in Turkey",
-		raised: 120000,
-		goal: 150000,
-		image: "https://images.unsplash.com/photo-1519389950473-47ba0277781c",
-		category: "Natural Disaster",
-		location: "Turkey",
-		daysLeft: 20,
-	},
-	{
-		id: 3,
-		title: "Flood Recovery",
-		description: "Help rebuild homes destroyed by severe flooding",
-		raised: 45000,
-		goal: 75000,
-		image: "https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7",
-		category: "Natural Disaster",
-		location: "Bangladesh",
-		daysLeft: 30,
-	},
-	{
-		id: 4,
-		title: "Medical Supply Drive",
-		description: "Providing essential medical supplies to affected areas",
-		raised: 25000,
-		goal: 50000,
-		image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158",
-		category: "Medical",
-		location: "Global",
-		daysLeft: 25,
-	},
-];
+// const campaigns: Campaign[] = [
+// 	{
+// 		id: 1,
+// 		title: "Hurricane Relief Fund",
+// 		description: "Emergency support for communities affected by Hurricane Ian",
+// 		raised: 85000,
+// 		goal: 100000,
+// 		image: "https://images.unsplash.com/photo-1605810230434-7631ac76ec81",
+// 		category: "Natural Disaster",
+// 		location: "Florida, USA",
+// 		daysLeft: 15,
+// 	},
+// 	{
+// 		id: 2,
+// 		title: "Earthquake Response",
+// 		description: "Immediate assistance for earthquake victims in Turkey",
+// 		raised: 120000,
+// 		goal: 150000,
+// 		image: "https://images.unsplash.com/photo-1519389950473-47ba0277781c",
+// 		category: "Natural Disaster",
+// 		location: "Turkey",
+// 		daysLeft: 20,
+// 	},
+// 	{
+// 		id: 3,
+// 		title: "Flood Recovery",
+// 		description: "Help rebuild homes destroyed by severe flooding",
+// 		raised: 45000,
+// 		goal: 75000,
+// 		image: "https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7",
+// 		category: "Natural Disaster",
+// 		location: "Bangladesh",
+// 		daysLeft: 30,
+// 	},
+// 	{
+// 		id: 4,
+// 		title: "Medical Supply Drive",
+// 		description: "Providing essential medical supplies to affected areas",
+// 		raised: 25000,
+// 		goal: 50000,
+// 		image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158",
+// 		category: "Medical",
+// 		location: "Global",
+// 		daysLeft: 25,
+// 	},
+// ];
 
 const Campaigns = () => {
 	const [searchQuery, setSearchQuery] = useState("");
 	const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-	const router = useRouter();
+	// const router = useRouter();
 
-	const filteredCampaigns = campaigns.filter((campaign) => {
-		const matchesSearch = campaign.title
-			.toLowerCase()
-			.includes(searchQuery.toLowerCase());
-		const matchesCategory =
-			!selectedCategory || campaign.category === selectedCategory;
-		return matchesSearch && matchesCategory;
-	});
+	// const filteredCampaigns = campaigns.filter((campaign) => {
+	// 	const matchesSearch = campaign.title
+	// 		.toLowerCase()
+	// 		.includes(searchQuery.toLowerCase());
+	// 	const matchesCategory =
+	// 		!selectedCategory || campaign.category === selectedCategory;
+	// 	return matchesSearch && matchesCategory;
+	// });
 
-	const handleCardClick = (campaignId: number) => {
-		router.push(`/campaigns/${campaignId}`);
-	};
+	// const handleCardClick = (campaignId: number) => {
+	// 	router.push(`/campaigns/${campaignId}`);
+	// };
 
 	return (
 		<div className="container mx-auto px-4 py-8 pt-24">

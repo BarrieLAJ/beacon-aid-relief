@@ -66,7 +66,6 @@ export function CampaignForm() {
 				description: `Campaign created successfully on Solana (${result.solanaAddress})`,
 			});
 			router.push("/dashboard/campaigns");
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch (error: any) {
 			toast({
 				variant: "destructive",

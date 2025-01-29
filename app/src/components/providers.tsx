@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 "use client";
 
 import { ThemeProvider } from "next-themes";
@@ -15,7 +13,7 @@ import { solanaTestnet } from "@reown/appkit/networks";
 
 const queryClient = new QueryClient();
 
-const modal = createAppKit({
+createAppKit({
 	projectId: "7a7dcda3aced505ed510a102aa0922ec",
 	metadata: metadata,
 	themeMode: "light",

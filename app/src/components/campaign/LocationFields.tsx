@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Input } from "@/components/ui/input";
 import { FormFieldWrapper } from "@/components/form/FormFieldWrapper";
 import { UseFormReturn } from "react-hook-form";

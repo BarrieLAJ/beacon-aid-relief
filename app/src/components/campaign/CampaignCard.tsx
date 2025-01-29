@@ -6,13 +6,10 @@ import { DonationHistory } from "./DonationHistory";
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 import { Button } from "../ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
+import { Database } from "@/integrations/supabase/types";
 
-interface Donation {
-	amount: number;
-	donor_id: string;
-	message: string | null;
-	created_at: string;
-}
+type DbDonation = Database["public"]["Tables"]["donations"]["Row"];
+type Donation = DbDonation & { donor_id: string };
 
 interface CampaignCardProps {
 	id: string;
