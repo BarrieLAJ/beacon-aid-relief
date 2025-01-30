@@ -33,7 +33,7 @@ const Footer = () => {
 							</li>
 							<li>
 								<Link
-									href="/create"
+									href="/dashboard"
 									className="text-beacon-100 hover:text-white transition-colors"
 								>
 									Start Campaign
