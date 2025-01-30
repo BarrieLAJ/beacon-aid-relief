@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -29,9 +28,8 @@ const formSchema = z.object({
 	image_url: z.string().optional(),
 });
 
-export function CampaignForm() {
+export function CampaignForm({ onSuccess }: { onSuccess: () => void }) {
 	const [isLoading, setIsLoading] = useState(false);
-	const router = useRouter();
 	const { toast } = useToast();
 	const campaignService = useCampaignService();
 
@@ -65,7 +63,7 @@ export function CampaignForm() {
 				title: "Success",
 				description: `Campaign created successfully on Solana (${result.solanaAddress})`,
 			});
-			router.push("/dashboard/campaigns");
+			onSuccess();
 		} catch (error: any) {
 			toast({
 				variant: "destructive",
