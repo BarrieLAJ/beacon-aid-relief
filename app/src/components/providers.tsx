@@ -3,7 +3,7 @@
 import { ThemeProvider } from "next-themes";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "sonner";
-import { WalletContextProvider } from "@/lib/wallet-context";
+// import { WalletContextProvider } from "@/lib/wallet-context";
 import { solanaWeb3JsAdapter } from "@/config";
 import { solanaDevnet } from "@reown/appkit/networks";
 import { solana } from "@reown/appkit/networks";
@@ -36,10 +36,10 @@ export function Providers({ children }: { children: React.ReactNode }) {
 			disableTransitionOnChange
 		>
 			<QueryClientProvider client={queryClient}>
-				<WalletContextProvider>
-					{children}
-					<Toaster position="top-right" />
-				</WalletContextProvider>
+				{/* <WalletContextProvider> */}
+				{children}
+				<Toaster position="top-right" />
+				{/* </WalletContextProvider> */}
 			</QueryClientProvider>
 		</ThemeProvider>
 	);

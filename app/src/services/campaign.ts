@@ -2,9 +2,11 @@ import { Program, AnchorProvider, BN } from "@project-serum/anchor";
 import { Connection, Keypair, PublicKey, SystemProgram } from "@solana/web3.js";
 import { useAppKitAccount } from "@reown/appkit/react";
 import { useAppKitConnection } from "@reown/appkit-adapter-solana/react";
-import { supabase } from "@/integrations/supabase/client";
+import { createClient } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
 import { BeaconAidRelief } from "../../../target/types/beacon_aid_relief";
+
+const supabase = createClient();
 
 const PROGRAM_ID = new PublicKey(
 	"BhENLVpEECmmibKWHiHKCxch3Q6FHTJ42faPASkLWSMS"
@@ -227,7 +229,6 @@ export class CampaignService {
 			.order("created_at", { ascending: false });
 
 		if (error) throw error;
-		// @ts-expect-error
 		return data || [];
 	}
 

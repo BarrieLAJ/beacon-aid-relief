@@ -1,6 +1,8 @@
 import { Inter } from "next/font/google";
 import { Providers } from "@/components/providers";
-import "./globals.css";
+import { AuthProvider } from "@/contexts/AuthContext";
+import { cn } from "@/lib/utils";
+import "@/app/globals.css";
 import Navigation from "@/components/Navigation";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -18,10 +20,14 @@ export default function RootLayout({
 }) {
 	return (
 		<html lang="en" suppressHydrationWarning>
-			<body className={inter.className}>
+			<body
+				className={cn("min-h-screen bg-background antialiased", inter.className)}
+			>
 				<Providers>
-					<Navigation />
-					{children}
+					<AuthProvider>
+						<Navigation />
+						{children}
+					</AuthProvider>
 				</Providers>
 			</body>
 		</html>
