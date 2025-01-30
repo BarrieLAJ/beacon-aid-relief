@@ -116,7 +116,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 			throw new Error("Connected wallet does not match registered wallet");
 		}
 
-		router.push("/(dashboard)/dashboard");
+		// Get the intended destination from URL or default to dashboard
+		const params = new URLSearchParams(window.location.search);
+		const next = params.get("next") || "/dashboard";
+		router.push(next);
 	};
 
 	const signOut = async () => {

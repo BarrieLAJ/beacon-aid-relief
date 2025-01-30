@@ -5,6 +5,7 @@ import { Menu, X, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { WalletButton } from "./WalletButton";
 import { usePathname } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Navigation = () => {
 	const [isOpen, setIsOpen] = useState(false);
@@ -18,19 +19,23 @@ const Navigation = () => {
 	];
 
 	// Navigation items for admin dashboard
-	const adminNavItems = [
-		{ name: "Website", path: "/" },
-		{ name: "Dashboard", path: "/dashboard" },
-	];
+	const adminNavItems = [{ name: "Website", path: "/" }];
 
 	const navItems = isAdminRoute ? adminNavItems : donorNavItems;
+	const { isNgo } = useAuth();
 
 	return (
 		<nav className="sticky top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b">
 			<div className={`${!isAdminRoute ? "container mx-auto" : ""} px-4`}>
 				<div className="flex items-center justify-between h-16">
 					<Link href="/" className="flex items-center space-x-2">
-						<span className="text-2xl font-bold text-beacon-600">BeaconAid</span>
+						{!isAdminRoute ? (
+							<span className="text-2xl font-bold text-beacon-600">BeaconAid</span>
+						) : (
+							<span className="text-2xl font-bold text-beacon-600">
+								BeaconAid Admin Panel
+							</span>
+						)}
 					</Link>
 
 					{/* Desktop Navigation */}
@@ -44,16 +49,22 @@ const Navigation = () => {
 								{item.name}
 							</Link>
 						))}
+						<WalletButton />
 						{!isAdminRoute ? (
-							<>
-								<WalletButton />
-								<Link href="/dashboard">
+							!isNgo ? (
+								<Link href="/auth/login">
 									<Button variant="outline" className="flex items-center gap-2">
 										<LogIn className="h-4 w-4" />
 										NGO Login
 									</Button>
 								</Link>
-							</>
+							) : (
+								<Link href="/dashboard">
+									<Button variant="outline" className="flex items-center gap-2">
+										Dashboard
+									</Button>
+								</Link>
+							)
 						) : null}
 					</div>
 
@@ -81,24 +92,17 @@ const Navigation = () => {
 									{item.name}
 								</Link>
 							))}
+							<WalletButton />
 							{!isAdminRoute && (
-								<>
+								<Link href="/auth/login" onClick={() => setIsOpen(false)}>
 									<Button
-										variant="default"
-										className="w-full bg-beacon-600 hover:bg-beacon-700"
+										variant="outline"
+										className="w-full flex items-center justify-center gap-2"
 									>
-										Connect Wallet
+										<LogIn className="h-4 w-4" />
+										NGO Login
 									</Button>
-									<Link href="/dashboard" onClick={() => setIsOpen(false)}>
-										<Button
-											variant="outline"
-											className="w-full flex items-center justify-center gap-2"
-										>
-											<LogIn className="h-4 w-4" />
-											NGO Login
-										</Button>
-									</Link>
-								</>
+								</Link>
 							)}
 						</div>
 					</div>
