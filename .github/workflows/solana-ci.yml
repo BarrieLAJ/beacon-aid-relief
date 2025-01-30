@@ -1,30 +1,66 @@
-name: Deploy Solana Program
+name: Solana CI
 
 on:
  push:
-  branches:
-   - main # Change this if you want a different branch to trigger deployments
+  branches: [main]
+ pull_request:
+  branches: [main]
+
+env:
+ CARGO_TERM_COLOR: always
 
 jobs:
- deploy:
-  runs-on: ubuntu-20.04
+ build:
+  runs-on: ubuntu-latest
+  container: projectserum/build:v0.24.2
 
   steps:
-   - name: Checkout repository
-     uses: actions/checkout@v3
-
-   - name: Setup Anchor framework
-     uses: metaDAOproject/setup-anchor@v3.1
-
-   - name: Configure Solana CLI
-     run: |
-      solana config set --url https://api.testnet.solana.com
-      echo "${{ secrets.SOLANA_WALLET }}" > /home/runner/.config/solana/id.json
-      chmod 600 /home/runner/.config/solana/id.json
-      solana address
-
-   - name: Build the Solana program
+   - uses: actions/checkout@v3
+   - name: List rustup toolchains
+     run: rustup toolchain list
+   - name: Set default toolchain
+     run: rustup default stable
+   - name: List rustup toolchains
+     run: rustup toolchain list
+   - name: Generate new keygen
+     run: solana-keygen new
+   - name: Set solana target cluster to local
+     run: solana config set --url http:localhost:8899
+   - name: Check solana config
+     run: solana config get
+   - name: Install yarn dependencies
+     run: yarn install
+   - name: Build
      run: anchor build
+   - name: Run tests
+     run: anchor test
+# name: Deploy Solana Program
 
-   - name: Deploy the program to Testnet
-     run: anchor deploy --provider.cluster https://api.testnet.solana.com
+# on:
+#  push:
+#   branches:
+#    - main # Change this if you want a different branch to trigger deployments
+
+# jobs:
+#  deploy:
+#   runs-on: ubuntu-20.04
+
+#   steps:
+#    - name: Checkout repository
+#      uses: actions/checkout@v3
+
+#    - name: Setup Anchor framework
+#      uses: metaDAOproject/setup-anchor@v3.1
+
+#    - name: Configure Solana CLI
+#      run: |
+#       solana config set --url https://api.testnet.solana.com
+#       echo "${{ secrets.SOLANA_WALLET }}" > /home/runner/.config/solana/id.json
+#       chmod 600 /home/runner/.config/solana/id.json
+#       solana address
+
+#    - name: Build the Solana program
+#      run: anchor build
+
+#    - name: Deploy the program to Testnet
+#      run: anchor deploy --provider.cluster https://api.testnet.solana.com
