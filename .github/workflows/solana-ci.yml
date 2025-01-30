@@ -1,0 +1,48 @@
+name: Solana CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main  # Change to your deployment branch if different
+
+jobs:
+  build-test-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set Up Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+
+      - name: Install Solana CLI
+        run: |
+          sh -c "$(curl -sSfL https://release.solana.com/stable/install)"
+          echo "$HOME/.local/share/solana/install/active_release/bin" >> $GITHUB_PATH
+          solana --version
+
+      - name: Install Anchor
+        run: |
+          cargo install --git https://github.com/coral-xyz/anchor avm --locked --force
+          avm install latest
+          avm use latest
+          anchor --version
+
+      - name: Configure Solana CLI
+        run: |
+          solana config set --url https://api.testnet.solana.com
+          echo "${{ secrets.SOLANA_WALLET }}" > ~/.config/solana/id.json
+          solana config get
+
+      - name: Build Anchor Program
+        run: anchor build
+
+      - name: Run Tests
+        run: anchor test
+
+      - name: Deploy to Testnet
+        if: github.ref == 'refs/heads/main'
+        run: anchor deploy --provider.cluster https://api.testnet.solana.com
