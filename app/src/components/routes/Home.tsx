@@ -1,18 +1,40 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { Heart, Users, Shield, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
+import { useQuery } from "@tanstack/react-query";
 
 type Campaign = Database["public"]["Tables"]["campaigns"]["Row"];
 
+const fetchFeaturedCampaigns = async () => {
+	const supabase = createClient();
+	const { data, error } = await supabase
+		.from("campaigns")
+		.select("*")
+		.eq("status", "active")
+		.order("created_at", { ascending: false })
+		.limit(6);
+
+	if (error) {
+		throw error;
+	}
+
+	return data || [];
+};
+
 const HomePage = () => {
-	const [featuredCampaigns, setFeaturedCampaigns] = useState<Campaign[]>([]);
-	const [isLoading, setIsLoading] = useState(true);
+	const {
+		data: featuredCampaigns = [],
+		isLoading,
+		error,
+	} = useQuery<Campaign[]>({
+		queryKey: ["featuredCampaigns"],
+		queryFn: fetchFeaturedCampaigns,
+	});
 
 	// Keep stats static as requested
 	const stats = [
@@ -20,25 +42,6 @@ const HomePage = () => {
 		{ label: "People Helped", value: "50,000+", icon: Users },
 		{ label: "Secure Transactions", value: "100%", icon: Shield },
 	];
-
-	useEffect(() => {
-		const fetchFeaturedCampaigns = async () => {
-			const supabase = createClient();
-			const { data, error } = await supabase
-				.from("campaigns")
-				.select("*")
-				.eq("status", "active")
-				.order("created_at", { ascending: false })
-				.limit(3);
-
-			if (!error && data) {
-				setFeaturedCampaigns(data);
-			}
-			setIsLoading(false);
-		};
-
-		fetchFeaturedCampaigns();
-	}, []);
 
 	return (
 		<div className="min-h-screen pt-16">
@@ -112,6 +115,22 @@ const HomePage = () => {
 								</div>
 							</div>
 						))
+					) : error ? (
+						<div className="col-span-3 text-center py-12">
+							<div className="space-y-4">
+								<p className="text-lg text-muted-foreground">
+									Unable to load campaigns at the moment
+								</p>
+								<p className="text-sm text-muted-foreground">Please try again later</p>
+								<Button
+									variant="outline"
+									className="mt-4"
+									onClick={() => window.location.reload()}
+								>
+									Retry <ArrowRight className="ml-2 h-4 w-4" />
+								</Button>
+							</div>
+						</div>
 					) : featuredCampaigns.length > 0 ? (
 						featuredCampaigns.map((campaign) => (
 							<div
@@ -153,7 +172,19 @@ const HomePage = () => {
 						))
 					) : (
 						<div className="col-span-3 text-center py-12">
-							<p className="text-muted-foreground">No active campaigns found</p>
+							<div className="space-y-4">
+								<p className="text-lg text-muted-foreground">
+									No active campaigns available at the moment
+								</p>
+								<p className="text-sm text-muted-foreground">
+									Be the first to start a campaign and make a difference!
+								</p>
+								<Link href="/dashboard">
+									<Button variant="outline" className="mt-4">
+										Start a Campaign <ArrowRight className="ml-2 h-4 w-4" />
+									</Button>
+								</Link>
+							</div>
 						</div>
 					)}
 				</div>
